@@ -933,9 +933,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;main.c: 27: ADCON0bits.VCFG = 0;
 "27
 [e = . . _ADCON0bits 0 4 -> -> 0 `i `uc ]
-[; ;main.c: 28: ADCON1bits.ADCS = 0b001;
+[; ;main.c: 28: ADCON1bits.ADCS = 0b101;
 "28
-[e = . . _ADCON1bits 0 1 -> -> 1 `i `uc ]
+[e = . . _ADCON1bits 0 1 -> -> 5 `i `uc ]
 [; ;main.c: 29: }
 "29
 [e :UE 87 ]
@@ -968,9 +968,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;main.c: 38: ADCON0bits.ADON = 1;
 "38
 [e = . . _ADCON0bits 0 0 -> -> 1 `i `uc ]
-[; ;main.c: 40: _delay((unsigned long)((5)*(4000000/4000000.0)));
+[; ;main.c: 40: _delay((unsigned long)((5)*(8000000/4000000.0)));
 "40
-[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 4000000 `l `d .4000000.0 `ul ]
+[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 8000000 `l `d .4000000.0 `ul ]
 [; ;main.c: 42: ADCON0bits.GO = 1;
 "42
 [e = . . _ADCON0bits 1 1 -> -> 1 `i `uc ]
@@ -1012,43 +1012,63 @@ Version 3.2 HI-TECH Software Intermediate Code
 "54
 [e = . . _TRISCbits 0 4 -> -> 0 `i `uc ]
 "56
-[v _adcRes `i ~T0 @X0 1 a ]
-[; ;main.c: 56: int adcRes;
-[; ;main.c: 58: while(1)
-"58
-[e :U 95 ]
-[; ;main.c: 59: {
+[v _adcResOne `i ~T0 @X0 1 a ]
+"57
+[v _adcResTwo `i ~T0 @X0 1 a ]
+[; ;main.c: 56: int adcResOne;
+[; ;main.c: 57: int adcResTwo;
+[; ;main.c: 59: while(1)
 "59
-{
-[; ;main.c: 60: adcRes = ADC_read(4);
+[e :U 95 ]
+[; ;main.c: 60: {
 "60
-[e = _adcRes ( _ADC_read (1 -> 4 `i ]
-[; ;main.c: 62: if(adcRes > 512)
-"62
-[e $ ! > _adcRes -> 512 `i 97  ]
-[; ;main.c: 63: PORTCbits.RC5 = 1;
+{
+[; ;main.c: 61: adcResOne = ADC_read(4);
+"61
+[e = _adcResOne ( _ADC_read (1 -> 4 `i ]
+[; ;main.c: 63: if(adcResOne > 512)
 "63
+[e $ ! > _adcResOne -> 512 `i 97  ]
+[; ;main.c: 64: PORTCbits.RC5 = 1;
+"64
 [e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
 [e $U 98  ]
-"64
-[e :U 97 ]
-[; ;main.c: 64: else
-[; ;main.c: 65: PORTCbits.RC5 = 0;
 "65
+[e :U 97 ]
+[; ;main.c: 65: else
+[; ;main.c: 66: PORTCbits.RC5 = 0;
+"66
 [e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
 [e :U 98 ]
-"66
+[; ;main.c: 68: adcResTwo = ADC_read(2);
+"68
+[e = _adcResTwo ( _ADC_read (1 -> 2 `i ]
+[; ;main.c: 70: if(adcResTwo > 512)
+"70
+[e $ ! > _adcResTwo -> 512 `i 99  ]
+[; ;main.c: 71: PORTCbits.RC4 = 1;
+"71
+[e = . . _PORTCbits 0 4 -> -> 1 `i `uc ]
+[e $U 100  ]
+"72
+[e :U 99 ]
+[; ;main.c: 72: else
+[; ;main.c: 73: PORTCbits.RC4 = 0;
+"73
+[e = . . _PORTCbits 0 4 -> -> 0 `i `uc ]
+[e :U 100 ]
+"74
 }
 [e :U 94 ]
-"58
+"59
 [e $U 95  ]
 [e :U 96 ]
-[; ;main.c: 66: }
-[; ;main.c: 68: return 0;
-"68
+[; ;main.c: 74: }
+[; ;main.c: 76: return 0;
+"76
 [e ) -> 0 `i ]
 [e $UE 93  ]
-[; ;main.c: 69: }
-"69
+[; ;main.c: 77: }
+"77
 [e :UE 93 ]
 }

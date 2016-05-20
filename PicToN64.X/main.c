@@ -18,14 +18,14 @@
 #pragma config IESO = ON        // Internal External Switchover bit (Internal External Switchover mode is enabled)
 #pragma config FCMEN = ON       // Fail-Safe Clock Monitor Enabled bit (Fail-Safe Clock Monitor is enable
 
-#define _XTAL_FREQ 4000000
+#define _XTAL_FREQ 8000000
 
 void ADC_init(void) {
     ANSELbits.ANS4 = 1; //ch4 analogue
     
     ADCON0bits.ADFM = 1; //right justified
     ADCON0bits.VCFG = 0; //VDD = +VE
-    ADCON1bits.ADCS = 0b001; //Fosc/8
+    ADCON1bits.ADCS = 0b101; //fosc/16//0b001; //Fosc/8
 }
 
 int ADC_read(int chan) {
@@ -53,16 +53,24 @@ int main()
     TRISCbits.TRISC5 = 0; //Mark RC5&4 as output for LED's
     TRISCbits.TRISC4 = 0;
     
-    int adcRes;
+    int adcResOne;
+    int adcResTwo;
 
     while(1)
     {
-        adcRes = ADC_read(4); 
+        adcResOne = ADC_read(4); 
 
-        if(adcRes > 512)
+        if(adcResOne > 512)
             PORTCbits.RC5 = 1;      
         else
             PORTCbits.RC5 = 0;     
+        
+        adcResTwo = ADC_read(2);
+
+        if(adcResTwo > 512)
+            PORTCbits.RC4 = 1;      
+        else
+            PORTCbits.RC4 = 0;     
     }
 
     return 0;
