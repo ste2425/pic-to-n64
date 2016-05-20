@@ -20,39 +20,44 @@
 
 #define _XTAL_FREQ 4000000
 
+void ADC_init(void) {
+    ANSELbits.ANS4 = 1; //ch4 analogue
+    
+    ADCON0bits.ADFM = 1; //right justified
+    ADCON0bits.VCFG = 0; //VDD = +VE
+    ADCON1bits.ADCS = 0b001; //Fosc/8
+}
+
+int ADC_read(int chan) {
+    if (chan > 7) {
+        return 0;
+    }
+    
+    ADCON0bits.ADON = 0;
+    ADCON0bits.CHS = chan; 
+    ADCON0bits.ADON = 1;
+    
+    __delay_us(5); //Wait the acquisition time.
+    
+    ADCON0bits.GO = 1; //Start reading
+    
+    while (ADCON0bits.GO == 1) {}; //Wait until complete
+    
+    return (ADRESH<<8)+ADRESL; //8 bit registers, 10bit reading, combine them
+}
+
 int main()
 {
-    int adcRes;
-
-    TRISC = 0xFF; //Reading channel 4. Its on TRISC so mark Whole port as input. Sledgehammer
-
-    ANSELbits.ANS4 = 1;     //Put channel 4 into analogue mode
-    
+    ADC_init();
+    TRISC = 0xFF; //Reading channel 4. Its on TRISC so mark Whole port as input. Sledgehamme
     TRISCbits.TRISC5 = 0; //Mark RC5&4 as output for LED's
     TRISCbits.TRISC4 = 0;
-
-    /* ADC SETUP */
-    ADCON0bits.ADFM = 1;        //ADC result is right justified
-    ADCON0bits.VCFG = 0;        //Mark VDD as +VE reference
     
-    /*
-     Set the conversion clock to Fosc/8
-     * This is because the conversion clock period (Tad) must be greater than
-     * 1.5us. With a clock of 4MHz, Fosc/8 = Tad = 2us
-     */
-    ADCON1bits.ADCS = 0b001;    
-    
-    ADCON0bits.CHS = 4;         //Select ADC channel
-    ADCON0bits.ADON = 1;        //Turn it on
+    int adcRes;
 
     while(1)
     {
-        __delay_us(5);              //Wait the acquisition time. See datasheet for value
-
-        ADCON0bits.GO = 1;          //start conversion
-        while(ADCON0bits.GO==1){};  //Wait to complete
-
-        adcRes = (ADRESH<<8)+ADRESL;	//combine the 10 bits of the conversion. PIC16f688 is 8 so two separate registers make up value.
+        adcRes = ADC_read(4); 
 
         if(adcRes > 512)
             PORTCbits.RC5 = 1;      

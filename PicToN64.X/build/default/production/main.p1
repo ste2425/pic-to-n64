@@ -1,8 +1,5 @@
 Version 3.2 HI-TECH Software Intermediate Code
-[p mainexit ]
-"1080 C:\Program Files (x86)\Microchip\xc8\v1.35\include\pic16f688.h
-[v _TRISC `Vuc ~T0 @X0 0 e@135 ]
-"1365
+"1365 C:\Program Files (x86)\Microchip\xc8\v1.35\include\pic16f688.h
 [s S62 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S62 . ANS0 ANS1 ANS2 ANS3 ANS4 ANS5 ANS6 ANS7 ]
 "1364
@@ -10,14 +7,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S61 . . ]
 "1376
 [v _ANSELbits `VS61 ~T0 @X0 0 e@145 ]
-"1086
-[s S48 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S48 . TRISC0 TRISC1 TRISC2 TRISC3 TRISC4 TRISC5 ]
-"1085
-[u S47 `S48 1 ]
-[n S47 . . ]
-"1095
-[v _TRISCbits `VS47 ~T0 @X0 0 e@135 ]
 "879
 [s S38 :1 `uc 1 :1 `uc 1 :3 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S38 . ADON GO_nDONE CHS . VCFG ADFM ]
@@ -54,6 +43,17 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _ADRESH `Vuc ~T0 @X0 0 e@30 ]
 "1910
 [v _ADRESL `Vuc ~T0 @X0 0 e@158 ]
+[p mainexit ]
+"1080
+[v _TRISC `Vuc ~T0 @X0 0 e@135 ]
+"1086
+[s S48 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S48 . TRISC0 TRISC1 TRISC2 TRISC3 TRISC4 TRISC5 ]
+"1085
+[u S47 `S48 1 ]
+[n S47 . . ]
+"1095
+[v _TRISCbits `VS47 ~T0 @X0 0 e@135 ]
 "215
 [s S9 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S9 . RC0 RC1 RC2 RC3 RC4 RC5 ]
@@ -900,112 +900,155 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;pic.h: 184: extern unsigned char __resetbits;
 [; ;pic.h: 185: extern __bit __powerdown;
 [; ;pic.h: 186: extern __bit __timeout;
-"9 main.c
+"11 main.c
 [p x FOSC=INTOSCIO ]
-"10
-[p x WDTE=OFF ]
-"11
-[p x PWRTE=OFF ]
 "12
-[p x MCLRE=ON ]
+[p x WDTE=OFF ]
 "13
-[p x CP=OFF ]
+[p x PWRTE=OFF ]
 "14
-[p x CPD=OFF ]
+[p x MCLRE=ON ]
 "15
-[p x BOREN=ON ]
+[p x CP=OFF ]
 "16
-[p x IESO=ON ]
+[p x CPD=OFF ]
 "17
+[p x BOREN=ON ]
+"18
+[p x IESO=ON ]
+"19
 [p x FCMEN=ON ]
-"21
-[v _main `(i ~T0 @X0 1 ef ]
-"22
+"23
+[v _ADC_init `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 21: int main()
-[; ;main.c: 22: {
+[; ;main.c: 23: void ADC_init(void) {
+[e :U _ADC_init ]
+[f ]
+[; ;main.c: 24: ANSELbits.ANS4 = 1;
+"24
+[e = . . _ANSELbits 0 4 -> -> 1 `i `uc ]
+[; ;main.c: 26: ADCON0bits.ADFM = 1;
+"26
+[e = . . _ADCON0bits 0 5 -> -> 1 `i `uc ]
+[; ;main.c: 27: ADCON0bits.VCFG = 0;
+"27
+[e = . . _ADCON0bits 0 4 -> -> 0 `i `uc ]
+[; ;main.c: 28: ADCON1bits.ADCS = 0b001;
+"28
+[e = . . _ADCON1bits 0 1 -> -> 1 `i `uc ]
+[; ;main.c: 29: }
+"29
+[e :UE 87 ]
+}
+"31
+[v _ADC_read `(i ~T0 @X0 1 ef1`i ]
+{
+[; ;main.c: 31: int ADC_read(int chan) {
+[e :U _ADC_read ]
+[v _chan `i ~T0 @X0 1 r1 ]
+[f ]
+[; ;main.c: 32: if (chan > 7) {
+"32
+[e $ ! > _chan -> 7 `i 89  ]
+{
+[; ;main.c: 33: return 0;
+"33
+[e ) -> 0 `i ]
+[e $UE 88  ]
+"34
+}
+[e :U 89 ]
+[; ;main.c: 34: }
+[; ;main.c: 36: ADCON0bits.ADON = 0;
+"36
+[e = . . _ADCON0bits 0 0 -> -> 0 `i `uc ]
+[; ;main.c: 37: ADCON0bits.CHS = chan;
+"37
+[e = . . _ADCON0bits 0 2 -> _chan `uc ]
+[; ;main.c: 38: ADCON0bits.ADON = 1;
+"38
+[e = . . _ADCON0bits 0 0 -> -> 1 `i `uc ]
+[; ;main.c: 40: _delay((unsigned long)((5)*(4000000/4000000.0)));
+"40
+[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 4000000 `l `d .4000000.0 `ul ]
+[; ;main.c: 42: ADCON0bits.GO = 1;
+"42
+[e = . . _ADCON0bits 1 1 -> -> 1 `i `uc ]
+[; ;main.c: 44: while (ADCON0bits.GO == 1) {};
+"44
+[e $U 90  ]
+[e :U 91 ]
+{
+}
+[e :U 90 ]
+[e $ == -> . . _ADCON0bits 1 1 `i -> 1 `i 91  ]
+[e :U 92 ]
+[; ;main.c: 46: return (ADRESH<<8)+ADRESL;
+"46
+[e ) + << -> _ADRESH `i -> 8 `i -> _ADRESL `i ]
+[e $UE 88  ]
+[; ;main.c: 47: }
+"47
+[e :UE 88 ]
+}
+"49
+[v _main `(i ~T0 @X0 1 ef ]
+"50
+{
+[; ;main.c: 49: int main()
+[; ;main.c: 50: {
 [e :U _main ]
 [f ]
-"23
-[v _adcRes `i ~T0 @X0 1 a ]
-[; ;main.c: 23: int adcRes;
-[; ;main.c: 25: TRISC = 0xFF;
-"25
-[e = _TRISC -> -> 255 `i `uc ]
-[; ;main.c: 27: ANSELbits.ANS4 = 1;
-"27
-[e = . . _ANSELbits 0 4 -> -> 1 `i `uc ]
-[; ;main.c: 29: TRISCbits.TRISC5 = 0;
-"29
-[e = . . _TRISCbits 0 5 -> -> 0 `i `uc ]
-[; ;main.c: 30: TRISCbits.TRISC4 = 0;
-"30
-[e = . . _TRISCbits 0 4 -> -> 0 `i `uc ]
-[; ;main.c: 33: ADCON0bits.ADFM = 1;
-"33
-[e = . . _ADCON0bits 0 5 -> -> 1 `i `uc ]
-[; ;main.c: 34: ADCON0bits.VCFG = 0;
-"34
-[e = . . _ADCON0bits 0 4 -> -> 0 `i `uc ]
-[; ;main.c: 41: ADCON1bits.ADCS = 0b001;
-"41
-[e = . . _ADCON1bits 0 1 -> -> 1 `i `uc ]
-[; ;main.c: 43: ADCON0bits.CHS = 4;
-"43
-[e = . . _ADCON0bits 0 2 -> -> 4 `i `uc ]
-[; ;main.c: 44: ADCON0bits.ADON = 1;
-"44
-[e = . . _ADCON0bits 0 0 -> -> 1 `i `uc ]
-[; ;main.c: 46: while(1)
-"46
-[e :U 89 ]
-[; ;main.c: 47: {
-"47
-{
-[; ;main.c: 48: _delay((unsigned long)((5)*(4000000/4000000.0)));
-"48
-[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 4000000 `l `d .4000000.0 `ul ]
-[; ;main.c: 50: ADCON0bits.GO = 1;
-"50
-[e = . . _ADCON0bits 1 1 -> -> 1 `i `uc ]
-[; ;main.c: 51: while(ADCON0bits.GO==1){};
+[; ;main.c: 51: ADC_init();
 "51
-[e $U 91  ]
-[e :U 92 ]
-{
-}
-[e :U 91 ]
-[e $ == -> . . _ADCON0bits 1 1 `i -> 1 `i 92  ]
-[e :U 93 ]
-[; ;main.c: 53: adcRes = (ADRESH<<8)+ADRESL;
+[e ( _ADC_init ..  ]
+[; ;main.c: 52: TRISC = 0xFF;
+"52
+[e = _TRISC -> -> 255 `i `uc ]
+[; ;main.c: 53: TRISCbits.TRISC5 = 0;
 "53
-[e = _adcRes + << -> _ADRESH `i -> 8 `i -> _ADRESL `i ]
-[; ;main.c: 55: if(adcRes > 512)
-"55
-[e $ ! > _adcRes -> 512 `i 94  ]
-[; ;main.c: 56: PORTCbits.RC5 = 1;
+[e = . . _TRISCbits 0 5 -> -> 0 `i `uc ]
+[; ;main.c: 54: TRISCbits.TRISC4 = 0;
+"54
+[e = . . _TRISCbits 0 4 -> -> 0 `i `uc ]
 "56
-[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
-[e $U 95  ]
-"57
-[e :U 94 ]
-[; ;main.c: 57: else
-[; ;main.c: 58: PORTCbits.RC5 = 0;
+[v _adcRes `i ~T0 @X0 1 a ]
+[; ;main.c: 56: int adcRes;
+[; ;main.c: 58: while(1)
 "58
-[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
 [e :U 95 ]
+[; ;main.c: 59: {
 "59
-}
-[e :U 88 ]
-"46
-[e $U 89  ]
-[e :U 90 ]
-[; ;main.c: 59: }
-[; ;main.c: 61: return 0;
-"61
-[e ) -> 0 `i ]
-[e $UE 87  ]
-[; ;main.c: 62: }
+{
+[; ;main.c: 60: adcRes = ADC_read(4);
+"60
+[e = _adcRes ( _ADC_read (1 -> 4 `i ]
+[; ;main.c: 62: if(adcRes > 512)
 "62
-[e :UE 87 ]
+[e $ ! > _adcRes -> 512 `i 97  ]
+[; ;main.c: 63: PORTCbits.RC5 = 1;
+"63
+[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
+[e $U 98  ]
+"64
+[e :U 97 ]
+[; ;main.c: 64: else
+[; ;main.c: 65: PORTCbits.RC5 = 0;
+"65
+[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
+[e :U 98 ]
+"66
+}
+[e :U 94 ]
+"58
+[e $U 95  ]
+[e :U 96 ]
+[; ;main.c: 66: }
+[; ;main.c: 68: return 0;
+"68
+[e ) -> 0 `i ]
+[e $UE 93  ]
+[; ;main.c: 69: }
+"69
+[e :UE 93 ]
 }
